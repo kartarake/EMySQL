@@ -1,49 +1,45 @@
-import pandas as pd
-import mysql.connector
-import time
-import decimal
-import karlib
+from karlib.boxify import boxify
 
-def fetchtable(database:str, user:str, password:str, host:str, table:str) -> list:
-    db = mysql.connector.connect(
-        host=host,
-        user=user,
-        password=password,
-        database=database
-    )
+import libs.exporters
+import libs.fetchers
+import libs.loaders
 
-    cursor = db.cursor()
-    cursor.execute(f"SELECT * FROM {table}")
-    data = cursor.fetchall()
+def mainmenu():
+    while True:
+        menu = """\
+        [1] Connect to database
+        [2] Settings
+        [3] Exit"""
+        print(boxify(menu))
 
-    db.close()
-    return data
+        choice = input("Enter your choice >> ")
+        choice = choice.strip()
 
-def fetchheadings(database:str, user:str, password:str, host:str, table:str) -> list:
-    db = mysql.connector.connect(
-        host=host,
-        user=user,
-        password=password,
-        database=database
-    )
-    cursor = db.cursor()
-    cursor.execute(f"DESCRIBE {table}")
-    data = cursor.fetchall()
-    headings = [row[0] for row in data]
+        if not choice in [str(i) for i in range(1, menu.count("\n") + 2)]:
+            print("Please enter a valid choice.")
+            continue
 
-    db.close()
-    return headings
-    
+        match choice:
+            case "1":
+                return "connectdb"
+            case "2":
+                return "settings"
+            case "3":
+                exit()
 
-def exporttable(data:list, headings:list, path:str) -> decimal.Decimal:
-    start_time = decimal.Decimal(time.time())
-    df = pd.DataFrame(data, columns=headings)
-    df.to_excel(path, index=False)
-    end_time = decimal.Decimal(time.time())
-    return end_time - start_time
+        break
 
 def main():
-    pass
+    main_welcome_string = libs.loaders.load_asciiart("EMySQL")
+    print(boxify(main_welcome_string), end="\n\n")
+
+    operation = mainmenu()
+
+    match operation:
+        case "connectdb":
+            pass
+        case "settings":
+            pass
 
 if __name__ == "__main__":
     main()
