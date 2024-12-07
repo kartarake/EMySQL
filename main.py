@@ -1,6 +1,5 @@
 from karlib.boxify import boxify
 
-import libs.exporters
 import libs.fetchers
 import libs.loaders
 
